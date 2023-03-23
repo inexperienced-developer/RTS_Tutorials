@@ -4,10 +4,28 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, ISelectable
 {
     private NavMeshAgent m_agent;
     private Animator m_animator;
+
+    [SerializeField] private GameObject m_selectedRing;
+    public bool IsSelected { get; private set; } = false;
+
+    public GameObject GetGameObject() => gameObject;
+
+    public void OnSelect()
+    {
+        IsSelected = true;
+        m_selectedRing.SetActive(true);
+    }
+
+    public void OnDeselect()
+    {
+        IsSelected = false;
+        m_selectedRing.SetActive(false);
+    }
+
 
     private void Awake()
     {
@@ -17,7 +35,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && IsSelected)
         {
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 10000))
             {
